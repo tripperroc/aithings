@@ -1,4 +1,4 @@
-##Write a searchtree solution for asteroids.
+## Write a searchtree solution for asteroids.
 
 You may use the following code to help.
 
@@ -7,6 +7,7 @@ play_asteroids.py takes a single asteroid game file and lets you play an interac
 	python play_asteroids.py -i asteroid_game_11.json
 
 Use
+
 	qwe
 	asd
 	zxc
