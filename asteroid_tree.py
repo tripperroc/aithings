@@ -26,7 +26,7 @@ class Agent:
 		return asteroids_exp.MOVES[key]
 
 
-class BFS_Search_Agent(Agent):
+class Search_Agent(Agent):
 	class Strategy:
 		def __init__(self):
 			self.stack  = []
@@ -46,9 +46,11 @@ class BFS_Search_Agent(Agent):
 		def expand(self, outer):
 			(direction, time) = self.move
 			
-			for action in ['e','d','c','q','w','a', 'z','x']:
+			for action in ['e','d','c','s']:
 				# note that 's' is also a legal move
-				for time in [1]:
+				if self.parent and self.parent.move[0] == action:
+					continue 
+				for time in range(10,100):
 					state = outer.act(self.state,action,time)
 					child = outer.Node(self,state,(action,time))
 					self.leaves[(action,time)] = child
@@ -70,12 +72,9 @@ class BFS_Search_Agent(Agent):
 		try:
 			while (True):
 				current = strategy.next()
-				#pdb.set_trace()
-				#print (self.retrieve_path(current))
 				if current.state.goal == asteroids_exp.Goal.SUCCESS:
 					path = self.retrieve_path(current)
 					print ("success!")
-					#print (path)
 					return path
 				if current.state.goal == asteroids_exp.Goal.OK:
 					leaves = current.expand(self)
@@ -84,7 +83,7 @@ class BFS_Search_Agent(Agent):
 		except IndexError:
 			return []
 
-bfs = BFS_Search_Agent()
+bfs = Search_Agent()
 path = bfs.run()
 df = pd.DataFrame(path, columns=['direction','time'])
 df.to_csv((".").join([bfs.args['in'].split(".")[0],"csv"]),index = False)
