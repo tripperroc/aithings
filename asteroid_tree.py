@@ -71,7 +71,7 @@ class BFS_Search_Agent(Agent):
 			while (True):
 				current = strategy.next()
 				#pdb.set_trace()
-				print (self.retrieve_path(current))
+				#print (self.retrieve_path(current))
 				if current.state.goal == asteroids_exp.Goal.SUCCESS:
 					path = self.retrieve_path(current)
 					print ("success!")
