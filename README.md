@@ -39,8 +39,8 @@ Your job is to make a copy of asteroid_tree.py (call it my_asteroid_tree.py) tha
 You may work with a partner. If so, only ONE of you should submit your code. Both of you should put your name on all source code and the README.md file that you create. Your README.md should contain a very brief writeup explaining how to run your code, what strategy you used and how it works (1-2 paragraphs worth) and if there any issues that came up.
 
 ## Grading
-50 points for quality of strategy 
-10 points code quality
-10 points writeup quality
-30 points for number of problems solved (this will likely be curved slightly)
+- 50 points for quality of strategy 
+- 10 points code quality
+- 10 points writeup quality
+- 30 points for number of problems solved (this will likely be curved slightly)
 
