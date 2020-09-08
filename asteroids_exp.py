@@ -1,10 +1,11 @@
 import tkinter as tk 
+import pandas as pd
 import json
 import tkinter
 import argparse
 import copy
 import pdb
-from getkey import getkey, keys
+from getkey import getkey
 from enum import Enum
 
 MOVES = {'q': (-1, -1), 'w': (0, -1), 'e': (1,-1), 'a':(-1,0),
@@ -98,6 +99,8 @@ def parse_args():
     # Add the arguments to the parser
     ap.add_argument("-i", "--in", required=True,
        help="Name of input file")
+    ap.add_argument("-m", "--move", 
+       help="Name of move file")
     ap.add_argument("-v", "--visual", action='store_true', 
         help="visualize") # this is what a flag argument looks like
     args = vars(ap.parse_args())
@@ -114,11 +117,11 @@ def init_asteroid_model(args):
     """Create asteroid belt model"""
     
     initial_data = read_spec(args["in"])
-    initial_state = State ([Asteroid(x,y,s,v) for s,x,y,v in zip(initial_data['s'],initial_data['x'],initial_data['y'],initial_data['v'])], Ship(3, initial_data['h']/2, initial_data['f']))
+    initial_state = State ([Asteroid(x,y,s,v) for s,x,y,v in zip(initial_data['s'],initial_data['x'],initial_data['y'],initial_data['v'])], Ship(1, initial_data['h']/2, initial_data['f']))
     window_width=initial_data['w']
     window_height=initial_data['h']
 
-    print ("Remaining fuel: %d" % initial_state.ship.fuel)
+    #print ("Remaining fuel: %d" % initial_state.ship.fuel)
 
     return initial_state, window_width, window_height
 
@@ -127,8 +130,9 @@ def coords(canvas, item):
     return (x2+x1)/2, (y2+y1)/2
 
 def render(view,state):
-    #pdb.set_trace()
 
+    if view == None:
+        return
     x,y = coords(view.canvas,view.spaceship_center)
     view.canvas.move(view.spaceship_center, state.ship.x*SCALE-x, state.ship.y*SCALE-y)       
     view.canvas.move(view.spaceship_outer, state.ship.x*SCALE-x, state.ship.y*SCALE-y)       
@@ -187,7 +191,10 @@ def move(state, xv, yv, time, window_width, window_height, args, renderer):
     if xv != state.ship.xv or yv != state.ship.yv:
         state.ship.fuel -= 1
         if state.ship.fuel < 0:
-            return state, Goal.FAIL
+            state.goal = Goal.FAIL
+            if args["visual"]:
+                renderer(state)
+            return state
 
     state.ship.xv = xv
     state.ship.yv = yv
@@ -206,6 +213,8 @@ def move(state, xv, yv, time, window_width, window_height, args, renderer):
             return state
         if state.ship.x >= window_width:
             state.goal = Goal.SUCCESS
+            if args["visual"]:
+                renderer(state)
             return state
         if args["visual"]:
             renderer(state)
@@ -219,14 +228,14 @@ def main():
     initial_state, window_width, window_height  = init_asteroid_model(args)
     view = init_asteroid_view(initial_state, window_width, window_height)
     state = copy.deepcopy(initial_state)
-    moves = [('e',40),('s',15),('d',20),('c',100)]
-
-    for m,time in moves:
+    
+    moves = pd.read_csv(args["move"])
+    for i, rec in moves.iterrows():
         if args["visual"]:
             render(view,state)
             key = getkey()
-        vx, vy = MOVES[m]
-        state = move(state, vx, vy,time, window_width, window_height, args, lambda x: render(view, x))
+        vx, vy = MOVES[rec['direction']]
+        state = move(state, vx, vy, rec['time'], window_width, window_height, args, lambda x: render(view, x))
         if state.goal != Goal.OK:
             break
     if args["visual"]:
@@ -235,6 +244,7 @@ def main():
 
     else:
         print(state.goal)
+        print("Fuel left: %d" % state.ship.fuel)
 
 if __name__ == '__main__':
     main()

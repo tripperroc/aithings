@@ -56,7 +56,7 @@ moves = [('e',40),('s',15),('d',20),('c',100)]
 X = np.array([[0,width],[0,width]])
 Y = np.array([[0,0],[height,height]])
 Z = np.array([[-.1,-.1],[-.1,-.1]])
-ax.plot_surface(X, Y, Z, color="grey")
+#ax.plot_surface(X, Y, Z, color="grey")
 
 print(state.goal)
 
