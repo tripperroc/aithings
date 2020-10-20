@@ -47,6 +47,19 @@ def eliminate_nots(formula):
 
 def to_cnf(formula):
 	if formula[0] in {"or", "and"}:
+		opposite = ({"or", "and"}-{formula[1][0]}).pop()
+		normals = []
+		opposites = []
+		for clause in formula[1]:
+			clause = to_cnf(formula)
+			if clause[0] == formula[0]:
+				normals += clause[1]
+			elif clauses[0] == opposite:
+				opposites  += clause[1]
+			else:
+				normals.append(clause)
+		if len(opposites) == 0:
+			return [formula[0], normals]
 		if formula[1][0] == "or" and formula[1][1] == "or":
 			return  
 
